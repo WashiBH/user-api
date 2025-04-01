@@ -15,6 +15,8 @@ public class UserPartialUpdateRequest {
             message = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número")
     private String contrasena;
 
+    private boolean activo;
+
     @Valid
     private List<PhoneDto> telefonos;
 }

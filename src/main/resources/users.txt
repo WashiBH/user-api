@@ -1,0 +1,43 @@
+{
+    "nombre": "Juan Rodriguez Perez",
+    "correo": "juan@gmail.com",
+    "contrasena": "Hunter123",
+    "telefonos": [
+        {
+            "numero": "985768051",
+            "codigoCiudad": "1",
+            "codigoPais": "57"
+        }
+    ]
+}
+
+{
+    "nombre": "Felipe Muñoz Aragon",
+    "correo": "felipe@gmail.com.com",
+    "contrasena": "12345",
+    "telefonos": [
+        {
+            "numero": "123456789",
+            "codigoCiudad": "1",
+            "codigoPais": "57"
+        },
+        {
+            "numero": "987654321",
+            "codigoCiudad": "1",
+            "codigoPais": "57"
+        }
+    ]
+}
+
+{
+    "nombre": "Maria Alarcon Segovia",
+    "correo": "maria.agmail.com",
+    "contrasena": "Maria123",
+    "telefonos": [
+        {
+            "numero": "987123456",
+            "codigoCiudad": "1",
+            "codigoPais": "57"
+        }
+    ]
+}

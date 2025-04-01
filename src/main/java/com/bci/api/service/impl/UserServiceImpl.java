@@ -5,6 +5,7 @@ import com.bci.api.dto.PhoneDto;
 import com.bci.api.dto.request.UserCreateRequest;
 import com.bci.api.dto.request.UserPartialUpdateRequest;
 import com.bci.api.dto.request.UserUpdateRequest;
+import com.bci.api.dto.response.UserCreateResponse;
 import com.bci.api.dto.response.UserResponse;
 import com.bci.api.exception.EmailAlreadyExistsException;
 import com.bci.api.exception.ResourceNotFoundException;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponse createUser(UserCreateRequest userRequest) {
+    public UserCreateResponse createUser(UserCreateRequest userRequest) {
         if (userRepository.existsByEmail(userRequest.getCorreo())) {
             throw new EmailAlreadyExistsException("El correo ya está registrado");
         }
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
         user.setToken(token);
 
         UserModel savedUser = userRepository.save(user);
-        return mapUserResponse(savedUser);
+        return mapUserCreateResponse(savedUser);
     }
 
     @Override
@@ -94,6 +95,9 @@ public class UserServiceImpl implements UserService {
             userUpdateRequest.getTelefonos().forEach(phoneDto -> {
                 PhoneModel phone = new PhoneModel();
                 phone.setUser(user);
+                phone.setNumber(phoneDto.getNumero());
+                phone.setCityCode(phoneDto.getCodigoCiudad());
+                phone.setCountryCode(phoneDto.getCodigoPais());
                 user.getPhones().add(phone);
             });
         }
@@ -118,12 +122,19 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(partialUpdateRequest.getContrasena()));
         }
 
+        if (partialUpdateRequest.isActivo() != user.getActive()) {
+            user.setActive(partialUpdateRequest.isActivo());
+        }
+
         // Actualizar teléfonos si se proporcionan
         if (partialUpdateRequest.getTelefonos() != null && !partialUpdateRequest.getTelefonos().isEmpty()) {
             user.getPhones().clear();
             partialUpdateRequest.getTelefonos().forEach(phoneDto -> {
                 PhoneModel phone = new PhoneModel();
                 phone.setUser(user);
+                phone.setNumber(phoneDto.getNumero());
+                phone.setCityCode(phoneDto.getCodigoCiudad());
+                phone.setCountryCode(phoneDto.getCodigoPais());
                 user.getPhones().add(phone);
             });
         }
@@ -157,6 +168,7 @@ public class UserServiceImpl implements UserService {
         userResponse.setActivo(userModel.getActive());
         userResponse.setModificado(userModel.getAuditModificationDate());
         userResponse.setUltimoLogin(userModel.getLastLogin());
+        userResponse.setToken(userModel.getToken());
         userResponse.setTelefonos(userModel.getPhones().stream()
                 .map(phoneModel -> {
                     PhoneDto phone = new PhoneDto();
@@ -165,6 +177,18 @@ public class UserServiceImpl implements UserService {
                     phone.setCodigoPais(phoneModel.getCountryCode());
                     return phone;
                 }).toList());
+        return userResponse;
+    }
+
+    private UserCreateResponse mapUserCreateResponse(UserModel userModel){
+        UserCreateResponse userResponse = new UserCreateResponse();
+        userResponse.setId(userModel.getUserId());
+        userResponse.setNombre(userModel.getName());
+        userResponse.setCorreo(userModel.getEmail());
+        userResponse.setCreado(userModel.getAuditCreatedDate());
+        userResponse.setActivo(userModel.getActive());
+        userResponse.setUltimoLogin(userModel.getLastLogin());
+        userResponse.setToken(userModel.getToken());
         return userResponse;
     }
 }
